@@ -1,0 +1,697 @@
+#car rent, lab 5
+openapi: 3.0.0
+info:
+  title: Car rent servise
+  description: |-
+    Laboratorna 5 Subtelna
+    This is a great car rent service prototype, where custumers can find the info about cars and admins can control different rent seances
+  contact:
+    email: sofiia.subtelna.kn.2021@lpnu.ua
+  version: 1.0.11
+servers:
+  - url: https://car_rent.swagger.io/api/v14
+tags:
+  - name: user
+    description: Creating and operating user accounts
+  - name: rent
+    description: Rent seances
+  - name: car
+    description: Info and operations with cars
+paths:
+  /car:
+    post:
+      tags:
+        - car
+      summary: Add a new car
+      description: Admins can add a new car to database
+      operationId: postCar
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Car'
+      security:
+        - user_auth:
+            - write:cars
+            - read:cars
+  /car/createWithList:
+    post:
+      tags:
+        - car
+      summary: Add new cars with an array
+      description: Admins may create a list of cars with given input array
+      operationId: postCarWithList
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Car'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Car'
+        default:
+          description: successful operation
+      security:
+        - user_auth:
+            - write:car
+            - read:car
+  /car/{id}:
+    get:
+      tags:
+        - car
+      summary: Get car info by it's id
+      description: Gives the information about the car by an id
+      operationId: getCarById
+      parameters:
+        - name: Id
+          in: path
+          description: Id of a car you are interested in
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserName'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserName'
+        '400':
+          description: Invalid id
+        '404':
+          description: car not found
+      security:
+        - user_auth:
+            - write:car
+            - read:car
+    put:
+      tags:
+        - car
+      summary: Update car
+      description: Admins can change the info about car by it's id
+      operationId: updateCarById
+      parameters:
+        - name: id
+          in: path
+          description: Id of a car you want to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Update an existent car in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Car'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Car'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Car'
+      responses:
+        default:
+          description: successful operation
+        '400':
+          description: Invalid id
+        '404':
+          description: Car not found
+      security:
+        - user_auth:
+            - write:car
+            - read:car
+    delete: 
+      tags: 
+        - car
+      summary: Delete car
+      description: Admins can delete cars by it's id
+      operationId: deleteCar
+      parameters:
+        - name: I
+          in: path
+          description: Id of a car you want to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid id supplie
+        '404':
+          description: Car not found
+      security:
+        - user_auth:
+            - write:car
+            - read:car
+
+  /user:
+    post:
+      tags:
+        - user
+      summary: Register a user
+      description: ''
+      operationId: postUser
+      requestBody:
+        description: Registered user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+  /user/createWithList:
+    post:
+      tags:
+        - user
+      summary: Add new users with a list
+      description: Admins can add new users with the array
+      operationId: postUserWithList
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserName'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserName'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserName'
+      security:
+        - user_auth:
+            - write:user
+            - read:user
+  /user/login:
+    get:
+      tags:
+        - user
+      summary: Log in
+      description: ''
+      operationId: logInUser
+      parameters:
+        - name: username
+          in: query
+          description: The username used in registration
+          required: false
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password used in registration
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid username or password 
+  /user/logout:
+    get:
+      tags:
+        - user
+      summary: Log out
+      description: ''
+      operationId: logOutUser
+      parameters: []
+      responses:
+        default:
+          description: successful operation
+      security:
+        - user_auth:
+            - read:user
+  /user/{username}:
+    get:
+      tags:
+        - user
+      summary: Get info about user by username
+      description: ''
+      operationId: getByUserame
+      parameters:
+        - name: username
+          in: path
+          description: The username that you are interested in
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserName'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserName'
+        '400':
+          description: Invalid username
+        '404':
+          description: User not found
+      security:
+        - user_auth:
+            - write:user
+            - read:user
+    put:
+      tags:
+        - user
+      summary: Update user
+      description: Update info about user 
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: username of a user that needs to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: successful operation
+        '400':
+          description: Invalid username 
+        '404':
+          description: User not found
+      security:
+        - user_auth:
+            -write:user
+            -read:user
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      description: ''
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The username of a user that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username
+        '404':
+          description: User not found
+      security:
+        - user_auth:
+            - write:user
+            - read:user
+  /rent:
+    post:
+      tags:
+        - rent
+      summary: Add a rent seance
+      description: ''
+      operationId: addRent
+      requestBody:
+        description: Create a new Rent
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RentSeance'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/RentSeance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RentSeance'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentSeance'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/RentSeance'
+        '405':
+          description: Invalid input
+      security:
+        - user_auth:
+          - write:rent
+          - read:rent
+    
+  /rent/{rentId}:
+    put:
+      tags:
+        - rent
+      summary: Update a rent seance
+      description: ''
+      operationId: updateRent
+      parameters:
+        - name: id
+          in: path
+          description: id of a rent seance that needs to be updated
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Update a rent seance
+        
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RentSeance'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/RentSeance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RentSeance'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentSeance'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/RentSeance'
+        '400':
+          description: Invalid Id
+        '404':
+          description: Rent not found
+        '405':
+             description: Validation exception
+      security:
+        - user_auth:
+          - write:rent
+          - read:rent
+    get:
+      tags:
+        - rent
+      summary: Get rent information by id
+      description: ''
+      operationId: getRentById
+      parameters:
+        - name: Id
+          in: path
+          description: Id of rent
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/RentSeance'
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/RentSeance'
+        '400':
+              description: Invalid ID supplied
+        '404':
+             description: Rent not found
+        '405':
+             description: Validation exception
+      security:
+        - user_auth:
+          - write:rent
+          - read:rent
+    delete:
+      tags:
+        - rent
+      summary: Delete a rent
+      description: ''
+      operationId: deleteRent
+      parameters:
+        - name: Id
+          in: path
+          description: Id of rent to delete
+          required: true
+          schema:
+            type: integer
+            
+      responses:
+        '200':
+          description: Operation succesful
+        '400':
+          description: Invalid rent id
+        '405':
+          description: Validation exception
+      security:
+        - user_auth:
+            - write:rent
+            - read:rent
+
+components:
+  schemas:
+    RentSeance:
+      required:
+        - name
+      type: object
+      properties:
+        rentId:
+          type: integer
+          format: int64
+          example: 12
+        rentStart:
+          type: string
+          example: 14/10/22
+        timeStart:
+          type: string
+          example: 12:00
+        rentEnd:
+          type: string
+          example: 14/10/22
+        timeEnd:
+          type: string
+          example: 15:00
+        renterId:
+          type: integer
+          format: int64
+        carId:
+          type: integer
+          format: int64
+        status:
+          type: string
+          description: rent status
+          enum:
+            - planned
+            - in_process
+            - passed
+      xml:
+        name: rent
+
+    Car:
+      type: object
+      properties:
+        carId:
+          type: integer
+          format: int64
+          example: 198772
+        model:
+          type: string
+        produceDate:
+          type: string
+          format: date-time
+        carType:
+          type: string
+          description: Type of car
+          example: Sedan
+          enum:
+            - Crossover
+            - Sedan
+            - Truck
+            - Hatchback
+            - Van/Minivan
+            - Sport
+        petrol:
+          type: string
+          description: what is used?
+          example: gasoline
+          enum:
+            - gasoline
+            - disel
+            - electro
+            - hydro
+        carStatus:
+          type: string
+          description: what is car status 
+          example: free
+          enum:
+            - free
+            - under mainstance
+            - busy
+      xml:
+        name: car
+
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'
+    UserName:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+          example: 10
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        email:
+          type: string
+          example: john@email.com
+        userType:
+          type: string
+          example: admin
+          enum:
+            - main_admin
+            - admin
+            - customer
+      xml:
+        name: UserName
+
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+          example: 10
+        username:
+          type: string
+          example: John_97_3
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+        phone:
+          type: string
+          example: '0687776655'
+        userType:
+          type: string
+          example: admin
+          enum:
+            - main_admin
+            - admin
+            - customer
+      xml:
+        name: user
+  requestBodies:
+    Car:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Car'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Car'   
+    Rent:
+      description: Rent that needs to be added
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RentSeance'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/RentSeance'
+    User:
+      description: User object that needs to be added
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/User'
+    UserArray:
+      description: List of user object
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+  securitySchemes:
+    user_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://car_rent.swagger.io/oauth/authorize
+          scopes:
+            write:rent: modify rent seances in your account
+            read:rent: read your rent seances
